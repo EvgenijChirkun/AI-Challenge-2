@@ -25,7 +25,10 @@ export function ActivityDetails({ participant }: ActivityDetailsProps) {
             <div className="activity-row__main">
               <span className="activity-row__title">{activity.title}</span>
               <span className="activity-row__date">
-                {new Date(activity.date).toLocaleDateString()}
+                {(() => {
+                  const [year, month, day] = activity.date.split('-').map(Number);
+                  return new Date(year, month - 1, day).toLocaleDateString();
+                })()}
               </span>
             </div>
             <div className="activity-row__meta">
