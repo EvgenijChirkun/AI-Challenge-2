@@ -1,0 +1,267 @@
+# .gitignore — Multi-language AI/Software Repository
+
+# ─────────────────────────────────────────────────────────────
+# Python
+# ─────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+pip-wheel-metadata/
+.venv/
+venv/
+ENV/
+env/
+.env/
+env.bak/
+venv.bak/
+virtualenv/
+.virtualenv/
+site-packages/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# PyTest
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# mypy / pyright / ruff
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyright/
+.ruff_cache/
+
+# ─────────────────────────────────────────────────────────────
+# Node.js / JavaScript / TypeScript
+# ─────────────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+.yarn/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+.npm/
+.eslintcache
+.stylelintcache
+dist/
+out/
+.next/
+.nuxt/
+.output/
+.cache/
+.parcel-cache/
+.turbo/
+.svelte-kit/
+storybook-static/
+
+# ─────────────────────────────────────────────────────────────
+# Java / Kotlin
+# ─────────────────────────────────────────────────────────────
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+target/
+hs_err_pid*
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Maven
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# ─────────────────────────────────────────────────────────────
+# Go
+# ─────────────────────────────────────────────────────────────
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/vendor/
+/go/bin/
+
+# ─────────────────────────────────────────────────────────────
+# Rust
+# ─────────────────────────────────────────────────────────────
+target/
+Cargo.lock
+**/*.rs.bk
+
+# ─────────────────────────────────────────────────────────────
+# C / C++
+# ─────────────────────────────────────────────────────────────
+*.o
+*.obj
+*.a
+*.lib
+*.lo
+*.la
+*.dSYM/
+*.su
+*.idb
+*.pdb
+CMakeFiles/
+cmake_install.cmake
+CMakeCache.txt
+Makefile
+
+# ─────────────────────────────────────────────────────────────
+# .NET / C#
+# ─────────────────────────────────────────────────────────────
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+.vs/
+project.lock.json
+project.fragment.lock.json
+*.nupkg
+*.snupkg
+
+# ─────────────────────────────────────────────────────────────
+# Environment / Secrets
+# ─────────────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+credentials/
+
+# ─────────────────────────────────────────────────────────────
+# IDE / Editors
+# ─────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.iml
+*.ipr
+*.iws
+nbproject/
+.nbattrs
+
+# ─────────────────────────────────────────────────────────────
+# OS-generated files
+# ─────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ─────────────────────────────────────────────────────────────
+# Logs / Temporary files / Archives
+# ─────────────────────────────────────────────────────────────
+*.log
+*.tmp
+*.temp
+*.bak
+*.orig
+*.swp
+tmp/
+temp/
+*.zip
+*.tar.gz
+*.tar.bz2
+*.rar
+*.7z
+
+# ─────────────────────────────────────────────────────────────
+# AI / ML — models, checkpoints, outputs
+# ─────────────────────────────────────────────────────────────
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+*.onnx
+*.pb
+*.tflite
+*.mlmodel
+checkpoints/
+saved_models/
+model_outputs/
+outputs/
+runs/
+wandb/
+mlruns/
+lightning_logs/
+
+# ─────────────────────────────────────────────────────────────
+# Data files (large raw datasets — reference them instead)
+# ─────────────────────────────────────────────────────────────
+*.csv.gz
+*.parquet
+*.arrow
+*.feather
+*.db
+*.sqlite
+*.sqlite3
+
+# ─────────────────────────────────────────────────────────────
+# Task artifacts — NOT ignored by default
+# (Artifacts committed intentionally should be inside task-N/artifacts/)
+# ─────────────────────────────────────────────────────────────
+# task-*/artifacts/ is intentionally NOT listed here so that
+# submitted artifacts are tracked by git.
