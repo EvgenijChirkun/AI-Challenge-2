@@ -6,14 +6,6 @@ Use this file to capture general notes, observations, and context about the AI C
 
 > _Add a brief description of the challenge, its goals, and any relevant links here._
 
-## Important Dates
-
-| Event                | Date |
-|----------------------|------|
-| Challenge start      |      |
-| Submission deadline  |      |
-| Results announced    |      |
-
 ## Tasks Summary
 
 | Task   | Topic | Status |
