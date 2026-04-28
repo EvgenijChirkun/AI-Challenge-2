@@ -1,3 +1,4 @@
+import { Star } from 'lucide-react';
 import type { ParticipantViewModel } from '../types/leaderboard';
 
 interface PodiumProps {
@@ -53,7 +54,10 @@ export function Podium({ participants }: PodiumProps) {
             </div>
             <strong className="podium-item__name">{vm.participant.displayName}</strong>
             <span className="podium-item__role">{vm.participant.roleTitle}</span>
-            <span className="podium-item__score">{vm.totalPoints} pts</span>
+            <span className="podium-item__score">
+              <Star className="podium-item__score-icon" aria-hidden="true" />
+              <span>{vm.totalPoints}</span>
+            </span>
           </div>
           <div className="podium-item__block" aria-hidden="true">
             <span className="podium-item__block-rank">{vm.rank}</span>
