@@ -1,7 +1,7 @@
-import { ChevronDown, ChevronUp } from 'lucide-react';
-import type { ParticipantViewModel } from '../types/leaderboard';
+import { ChevronDown, ChevronUp, Star } from 'lucide-react';
+import type { Category, ParticipantViewModel } from '../types/leaderboard';
 import { ActivityDetails } from './ActivityDetails';
-import { ScoreBadge } from './ScoreBadge';
+import { CategoryIcon } from './CategoryIcon';
 
 interface ParticipantCardProps {
   participant: ParticipantViewModel;
@@ -34,58 +34,64 @@ function getAvatarGradient(seed: string) {
   return `linear-gradient(135deg, ${start}, ${end})`;
 }
 
+const allCategories: Category[] = ['education', 'publicSpeaking', 'universityPartnership'];
+
 export function ParticipantCard({ participant, isExpanded, onToggle }: ParticipantCardProps) {
+  const person = participant.participant;
+
+  const activeCategories = allCategories.filter((cat) => participant.categoryTotals[cat] > 0);
+
   return (
     <article className={`participant-card${isExpanded ? ' participant-card--expanded' : ''}`}>
       <div className="participant-card__summary">
         <div className="participant-card__identity">
-          <span className="participant-card__rank">#{participant.rank}</span>
+          <span className="participant-card__rank">{participant.rank}</span>
           <span
             className="participant-card__avatar"
-            style={{ backgroundImage: getAvatarGradient(participant.participant.avatarSeed) }}
+            style={{ backgroundImage: getAvatarGradient(person.avatarSeed) }}
             aria-hidden="true"
           >
-            {getInitials(participant.participant.displayName)}
+            {getInitials(person.displayName)}
           </span>
-          <span className="participant-card__person">
-            <strong>{participant.participant.displayName}</strong>
-            <span>{participant.participant.roleTitle}</span>
-          </span>
+          <div className="participant-card__person">
+            <strong>{person.displayName}</strong>
+            <span>{person.roleTitle}</span>
+          </div>
         </div>
 
-        <div className="participant-card__scores">
-          <ScoreBadge
-            value={participant.categoryTotals.education}
-            category="education"
-            label="Education"
-          />
-          <ScoreBadge
-            value={participant.categoryTotals.publicSpeaking}
-            category="publicSpeaking"
-            label="Speaking"
-          />
-          <ScoreBadge
-            value={participant.categoryTotals.universityPartnership}
-            category="universityPartnership"
-            label="University"
-          />
-          <ScoreBadge value={participant.totalPoints} label="Total" highlight />
+        <div className="participant-card__metrics">
+          {activeCategories.map((cat) => (
+            <div key={cat} className="metric-item">
+              <CategoryIcon category={cat} className="metric-item__icon" />
+              <span className="metric-item__value">{participant.categoryTotals[cat]}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="participant-card__sep" aria-hidden="true" />
+
+        <div className="participant-card__total">
+          <span className="total-label">Total</span>
+          <div className="total-score">
+            <Star className="total-star" aria-hidden="true" />
+            <span className="total-value">{participant.totalPoints}</span>
+          </div>
         </div>
 
         <button
           type="button"
           className="participant-card__toggle"
-          onClick={() => onToggle(participant.participant.id)}
+          onClick={() => onToggle(person.id)}
           aria-expanded={isExpanded}
-          aria-controls={`activity-panel-${participant.participant.id}`}
+          aria-controls={`activity-panel-${person.id}`}
+          aria-label={isExpanded ? 'Collapse details' : 'Expand details'}
         >
           {isExpanded ? <ChevronUp aria-hidden="true" /> : <ChevronDown aria-hidden="true" />}
-          <span>{isExpanded ? 'Collapse' : 'Expand'}</span>
         </button>
       </div>
 
       {isExpanded ? (
-        <div id={`activity-panel-${participant.participant.id}`}>
+        <div id={`activity-panel-${person.id}`}>
           <ActivityDetails participant={participant} />
         </div>
       ) : null}

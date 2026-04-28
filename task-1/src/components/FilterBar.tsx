@@ -39,67 +39,55 @@ export function FilterBar({ filters, onFilterChange }: FilterBarProps) {
 
   return (
     <section className="filter-card" aria-label="Leaderboard filters">
-      <div className="filter-card__grid">
-        <label className="filter-field">
-          <span className="filter-field__label">Year</span>
-          <select
-            className="filter-field__control"
-            value={String(filters.year)}
-            onChange={(event) =>
-              updateFilter(
-                'year',
-                event.target.value === 'all' ? 'all' : Number(event.target.value),
-              )
-            }
-          >
-            <option value="all">All Years</option>
-            <option value="2025">2025</option>
-          </select>
-        </label>
+      <div className="filter-card__row">
+        <select
+          className="filter-select"
+          value={String(filters.year)}
+          onChange={(event) =>
+            updateFilter('year', event.target.value === 'all' ? 'all' : Number(event.target.value))
+          }
+          aria-label="Year"
+        >
+          <option value="all">All Years</option>
+          <option value="2025">2025</option>
+        </select>
 
-        <label className="filter-field">
-          <span className="filter-field__label">Quarter</span>
-          <select
-            className="filter-field__control"
-            value={filters.quarter}
-            onChange={(event) => updateFilter('quarter', event.target.value as 'all' | Quarter)}
-          >
-            {quarterOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <select
+          className="filter-select"
+          value={filters.quarter}
+          onChange={(event) => updateFilter('quarter', event.target.value as 'all' | Quarter)}
+          aria-label="Quarter"
+        >
+          {quarterOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
 
-        <label className="filter-field">
-          <span className="filter-field__label">Category</span>
-          <select
-            className="filter-field__control"
-            value={filters.category}
-            onChange={(event) => updateFilter('category', event.target.value as 'all' | Category)}
-          >
-            {categoryOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <select
+          className="filter-select"
+          value={filters.category}
+          onChange={(event) => updateFilter('category', event.target.value as 'all' | Category)}
+          aria-label="Category"
+        >
+          {categoryOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
 
-        <label className="filter-field filter-field--search">
-          <span className="filter-field__label">Employee</span>
-          <span className="filter-search">
-            <Search className="filter-search__icon" aria-hidden="true" />
-            <input
-              className="filter-field__control filter-field__control--search"
-              type="search"
-              placeholder="Search participant"
-              value={filters.search}
-              onChange={handleSearchChange}
-            />
-          </span>
-        </label>
+        <div className="filter-search-wrap">
+          <Search className="filter-search-icon" aria-hidden="true" />
+          <input
+            className="filter-search-input"
+            type="search"
+            placeholder="Search employee..."
+            value={filters.search}
+            onChange={handleSearchChange}
+          />
+        </div>
       </div>
     </section>
   );

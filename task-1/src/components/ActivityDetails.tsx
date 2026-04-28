@@ -8,36 +8,56 @@ interface ActivityDetailsProps {
 const categoryLabels: Record<Category, string> = {
   education: 'Education',
   publicSpeaking: 'Public Speaking',
-  universityPartnership: 'University Partnership',
+  universityPartnership: 'Univ. Partnership',
 };
 
 export function ActivityDetails({ participant }: ActivityDetailsProps) {
   return (
     <div className="activity-details">
-      <div className="activity-details__header">
-        <h3>Recent Activities</h3>
-        <span>{participant.visibleActivities.length} visible entries</span>
-      </div>
-
-      <div className="activity-details__table" role="list">
+      <p className="activity-details__label">Recent Activity</p>
+      <div className="activity-table" role="table">
+        <div className="activity-table__head" role="row">
+          <span className="activity-table__head-cell" role="columnheader">
+            Activity
+          </span>
+          <span className="activity-table__head-cell" role="columnheader">
+            Category
+          </span>
+          <span className="activity-table__head-cell" role="columnheader">
+            Date
+          </span>
+          <span
+            className="activity-table__head-cell activity-table__head-cell--right"
+            role="columnheader"
+          >
+            Points
+          </span>
+        </div>
         {participant.visibleActivities.map((activity) => (
-          <div className="activity-row" key={activity.id} role="listitem">
-            <div className="activity-row__main">
-              <span className="activity-row__title">{activity.title}</span>
-              <span className="activity-row__date">
-                {(() => {
-                  const [year, month, day] = activity.date.split('-').map(Number);
-                  return new Date(year, month - 1, day).toLocaleDateString();
-                })()}
-              </span>
-            </div>
-            <div className="activity-row__meta">
-              <span className={`category-pill category-pill--${activity.category}`}>
-                <CategoryIcon category={activity.category} className="category-pill__icon" />
+          <div className="activity-table__row" key={activity.id} role="row">
+            <span className="activity-row__title" role="cell">
+              {activity.title}
+            </span>
+            <span role="cell">
+              <span
+                className={`activity-category-pill activity-category-pill--${activity.category}`}
+              >
+                <CategoryIcon
+                  category={activity.category}
+                  className="activity-category-pill__icon"
+                />
                 {categoryLabels[activity.category]}
               </span>
-              <span className="activity-row__points">+{activity.points}</span>
-            </div>
+            </span>
+            <span className="activity-row__date" role="cell">
+              {(() => {
+                const [year, month, day] = activity.date.split('-').map(Number);
+                return new Date(year, month - 1, day).toLocaleDateString();
+              })()}
+            </span>
+            <span className="activity-row__points-cell" role="cell">
+              +{activity.points}
+            </span>
           </div>
         ))}
       </div>

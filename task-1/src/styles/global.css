@@ -27,9 +27,6 @@ body,
 
 body {
   margin: 0;
-  background:
-    radial-gradient(circle at top, rgba(32, 167, 223, 0.08), transparent 28%),
-    linear-gradient(180deg, #f8fbfd 0%, var(--page-bg) 100%);
 }
 
 button,

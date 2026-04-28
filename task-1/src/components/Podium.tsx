@@ -1,8 +1,32 @@
-import { Trophy } from 'lucide-react';
 import type { ParticipantViewModel } from '../types/leaderboard';
 
 interface PodiumProps {
   participants: ParticipantViewModel[];
+}
+
+const avatarPairs = [
+  ['#20a7df', '#8bd5f5'],
+  ['#2448bf', '#79b8ff'],
+  ['#0f766e', '#6ee7d8'],
+  ['#8f5cf6', '#cbb8ff'],
+  ['#1d4ed8', '#93c5fd'],
+  ['#ca8a04', '#fde68a'],
+];
+
+function getInitials(name: string) {
+  return name
+    .split(' ')
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase();
+}
+
+function getAvatarGradient(seed: string) {
+  const index =
+    seed.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0) % avatarPairs.length;
+  const [start, end] = avatarPairs[index];
+  return `linear-gradient(135deg, ${start}, ${end})`;
 }
 
 export function Podium({ participants }: PodiumProps) {
@@ -12,19 +36,29 @@ export function Podium({ participants }: PodiumProps) {
 
   return (
     <section className="podium" aria-label="Top participants podium">
-      {participants.map((participant) => (
-        <article
-          key={participant.participant.id}
-          className={`podium-card podium-card--place-${participant.rank}`}
-        >
-          <span className="podium-card__place">#{participant.rank}</span>
-          <div className="podium-card__crown">
-            <Trophy aria-hidden="true" />
+      {participants.map((vm) => (
+        <div key={vm.participant.id} className={`podium-item podium-item--place-${vm.rank}`}>
+          <div className="podium-item__info">
+            <div className="podium-item__avatar-wrap">
+              <div
+                className="podium-avatar"
+                style={{ backgroundImage: getAvatarGradient(vm.participant.avatarSeed) }}
+                aria-hidden="true"
+              >
+                {getInitials(vm.participant.displayName)}
+              </div>
+              <span className="podium-rank-badge" aria-hidden="true">
+                {vm.rank}
+              </span>
+            </div>
+            <strong className="podium-item__name">{vm.participant.displayName}</strong>
+            <span className="podium-item__role">{vm.participant.roleTitle}</span>
+            <span className="podium-item__score">{vm.totalPoints} pts</span>
           </div>
-          <strong className="podium-card__name">{participant.participant.displayName}</strong>
-          <span className="podium-card__role">{participant.participant.roleTitle}</span>
-          <span className="podium-card__score">{participant.totalPoints} pts</span>
-        </article>
+          <div className="podium-item__block" aria-hidden="true">
+            <span className="podium-item__block-rank">{vm.rank}</span>
+          </div>
+        </div>
       ))}
     </section>
   );

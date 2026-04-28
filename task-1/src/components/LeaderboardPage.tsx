@@ -65,7 +65,6 @@ export function LeaderboardPage() {
     <main className="leaderboard-page">
       <div className="leaderboard-shell">
         <header className="leaderboard-header">
-          <p className="leaderboard-header__eyebrow">AI Challenge</p>
           <h1>Leaderboard</h1>
           <p className="leaderboard-header__subtitle">
             Top performers based on contributions and activity.
