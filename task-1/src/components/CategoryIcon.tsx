@@ -1,4 +1,4 @@
-import { GraduationCap, Handshake, Monitor } from 'lucide-react';
+import { GraduationCap, Monitor, Smile } from 'lucide-react';
 import type { Category } from '../types/leaderboard';
 
 interface CategoryIconProps {
@@ -17,7 +17,7 @@ export function CategoryIcon({ category, className, variant = 'default' }: Categ
       return <Monitor className={className} aria-hidden="true" />;
     }
 
-    return <Handshake className={className} aria-hidden="true" />;
+    return <Smile className={className} aria-hidden="true" />;
   }
 
   if (category === 'education') {
@@ -28,5 +28,5 @@ export function CategoryIcon({ category, className, variant = 'default' }: Categ
     return <Monitor className={className} aria-hidden="true" />;
   }
 
-  return <Handshake className={className} aria-hidden="true" />;
+  return <Smile className={className} aria-hidden="true" />;
 }
