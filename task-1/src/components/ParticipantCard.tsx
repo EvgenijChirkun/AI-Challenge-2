@@ -36,6 +36,12 @@ function getAvatarGradient(seed: string) {
 
 const allCategories: Category[] = ['education', 'publicSpeaking', 'universityPartnership'];
 
+const categoryLabels: Record<Category, string> = {
+  education: 'Education',
+  publicSpeaking: 'Public Speaking',
+  universityPartnership: 'University Partnership',
+};
+
 export function ParticipantCard({ participant, isExpanded, onToggle }: ParticipantCardProps) {
   const person = participant.participant;
 
@@ -61,8 +67,8 @@ export function ParticipantCard({ participant, isExpanded, onToggle }: Participa
 
         <div className="participant-card__metrics">
           {activeCategories.map((cat) => (
-            <div key={cat} className="metric-item">
-              <CategoryIcon category={cat} className="metric-item__icon" />
+            <div key={cat} className="metric-item" title={categoryLabels[cat]}>
+              <CategoryIcon category={cat} className="metric-item__icon" variant="metric" />
               <span className="metric-item__value">{participant.categoryTotals[cat]}</span>
             </div>
           ))}

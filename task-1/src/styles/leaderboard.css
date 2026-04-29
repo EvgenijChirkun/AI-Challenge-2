@@ -8,7 +8,7 @@
 }
 
 .leaderboard-header {
-  margin-bottom: 22px;
+  margin-bottom: 24px;
 }
 
 .leaderboard-header h1 {
@@ -32,7 +32,7 @@
   border-radius: var(--radius-card);
   box-shadow: var(--shadow);
   padding: 20px 24px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .filter-card__row {
@@ -43,9 +43,9 @@
 
 .filter-select {
   height: 34px;
-  border: 1px solid var(--border);
+  border: 1px solid #94a3b8;
   border-radius: 2px;
-  background: var(--card-bg);
+  background: #fff;
   padding: 0 12px;
   color: var(--text-main);
   font-size: 14px;
@@ -56,13 +56,34 @@
   width: 120px;
 }
 
+.filter-select option {
+  background: #fff;
+  color: #1f2937;
+  padding: 4px 8px;
+}
+
+.filter-select option:checked {
+  background: #f3f4f6;
+  color: #0f172a;
+}
+
+.filter-select option:hover,
+.filter-select option:focus {
+  background: #f3f4f6;
+  color: #0f172a;
+}
+
 .filter-card__row .filter-select:nth-child(3) {
   width: 152px;
 }
 
 .filter-select:focus {
-  border-color: var(--accent-blue);
-  box-shadow: 0 0 0 2px rgba(32, 167, 223, 0.15);
+  border-color: #64748b;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.08);
+}
+
+.filter-select:hover {
+  border-color: #7a8aa0;
 }
 
 .filter-search-wrap {
@@ -85,9 +106,9 @@
 .filter-search-input {
   width: 100%;
   height: 34px;
-  border: 1px solid var(--border);
+  border: 1px solid #94a3b8;
   border-radius: 2px;
-  background: var(--card-bg);
+  background: #fff;
   padding: 0 12px 0 36px;
   color: var(--text-main);
   font-size: 14px;
@@ -95,8 +116,16 @@
 }
 
 .filter-search-input:focus {
-  border-color: var(--accent-blue);
-  box-shadow: 0 0 0 2px rgba(32, 167, 223, 0.15);
+  border-color: #64748b;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.08);
+}
+
+.filter-search-input:hover {
+  border-color: #7a8aa0;
+}
+
+.filter-search-input::placeholder {
+  color: #64748b;
 }
 
 /* ── Podium ──────────────────────────────────────────────── */
@@ -106,7 +135,7 @@
   justify-content: center;
   align-items: flex-end;
   gap: 18px;
-  margin-bottom: 34px;
+  margin-bottom: 44px;
   padding-top: 8px;
 }
 
@@ -114,6 +143,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-end;
   width: 280px;
 }
 
@@ -123,19 +153,21 @@
 
 .podium-item--place-2 {
   order: 1;
-  transform: translateY(32px);
+  transform: translateY(0);
 }
 
 .podium-item--place-3 {
   order: 3;
-  transform: translateY(46px);
+  transform: translateY(0);
 }
 
 .podium-item__info {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 14px;
+  padding-bottom: 16px;
+  min-height: 220px;
+  justify-content: flex-end;
 }
 
 .podium-item__avatar-wrap {
@@ -201,8 +233,9 @@
 
 .podium-item__name {
   display: block;
-  font-size: 0.98rem;
+  font-size: 32px;
   font-weight: 700;
+  line-height: 1.1;
   text-align: center;
   max-width: 210px;
   white-space: nowrap;
@@ -212,7 +245,7 @@
 
 .podium-item__role {
   display: block;
-  font-size: 0.84rem;
+  font-size: 14px;
   color: var(--text-muted);
   text-align: center;
   margin-top: 3px;
@@ -278,7 +311,7 @@
 }
 
 .podium-item--place-3 .podium-item__block {
-  height: 96px;
+  height: 114px;
   background: linear-gradient(180deg, #eef5fb 0%, #cae4f4 100%);
 }
 
@@ -302,7 +335,7 @@
 .participant-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .participant-card {
@@ -390,13 +423,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
+  min-width: 20px;
 }
 
 .metric-item__icon {
-  width: 20px;
-  height: 20px;
-  color: #0ea5e9;
+  width: 18px;
+  height: 18px;
+  color: #38a6d7;
+  stroke-width: 1.9;
 }
 
 .metric-item__value {
@@ -484,7 +519,8 @@
 
 .activity-details {
   border-top: 1px solid var(--border);
-  padding: 16px 20px 0;
+  padding: 14px 20px 10px;
+  background: #fcfdff;
 }
 
 .activity-details__label {
@@ -513,8 +549,8 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  color: var(--text-muted);
-  padding: 12px 8px;
+  color: #7a8aa0;
+  padding: 10px 8px;
 }
 
 .activity-table__head-cell--right {
@@ -525,12 +561,12 @@
   display: grid;
   grid-template-columns: minmax(0, 3fr) minmax(0, 1.8fr) 120px 70px;
   padding: 0;
-  border-bottom: 1px solid rgba(221, 228, 236, 0.8);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.95);
   align-items: center;
 }
 
 .activity-table__row > * {
-  padding: 16px 8px;
+  padding: 14px 8px;
 }
 
 .activity-table__row:last-child {
@@ -548,6 +584,7 @@
 .activity-row__date {
   font-size: 14px;
   color: var(--text-muted);
+  text-align: left;
 }
 
 .activity-row__points-cell {
@@ -555,6 +592,7 @@
   font-weight: 700;
   color: var(--accent-blue);
   text-align: right;
+  padding-right: 10px;
 }
 
 .activity-category-pill {
@@ -566,22 +604,22 @@
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
-  background: #e2e8f0;
+  background: #e8eef5;
   color: #475569;
 }
 
 .activity-category-pill--education {
-  background: #e2e8f0;
+  background: #e8eef5;
   color: #475569;
 }
 
 .activity-category-pill--publicSpeaking {
-  background: #e2e8f0;
+  background: #e8eef5;
   color: #475569;
 }
 
 .activity-category-pill--universityPartnership {
-  background: #e2e8f0;
+  background: #e8eef5;
   color: #475569;
 }
 
@@ -614,7 +652,7 @@
   }
 
   .podium {
-    gap: 12px;
+    gap: 14px;
   }
 
   .podium-item {
@@ -623,7 +661,11 @@
 
   .podium-item--place-2,
   .podium-item--place-3 {
-    transform: translateY(0);
+    transform: none;
+  }
+
+  .podium-item__info {
+    min-height: 198px;
   }
 
   .podium-item--place-1 .podium-item__block {
@@ -700,6 +742,10 @@
     max-width: 280px;
   }
 
+  .podium {
+    margin-bottom: 42px;
+  }
+
   .podium-avatar {
     width: 80px;
     height: 80px;
@@ -715,6 +761,10 @@
   .podium-item__score {
     font-size: 16px;
     padding: 6px 16px;
+  }
+
+  .podium-item__info {
+    min-height: 180px;
   }
 
   .podium-item__score-icon {
