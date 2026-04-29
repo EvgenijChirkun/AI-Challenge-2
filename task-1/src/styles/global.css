@@ -1,14 +1,14 @@
 :root {
-  --page-bg: #f5f7fa;
+  --page-bg: #f8fafc;
   --card-bg: #ffffff;
-  --text-main: #122033;
-  --text-muted: #617083;
-  --accent-blue: #20a7df;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --accent-blue: #0ea5e9;
   --accent-gold: #f2bd18;
   --accent-silver: #d7e4f4;
   --accent-bronze: #d9edf7;
-  --border: #dde4ec;
-  --shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  --border: #e2e8f0;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   --radius-card: 12px;
   font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: var(--text-main);
