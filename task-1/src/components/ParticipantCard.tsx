@@ -1,5 +1,6 @@
 import { ChevronDown, ChevronUp, Star } from 'lucide-react';
 import type { Category, ParticipantViewModel } from '../types/leaderboard';
+import { getAvatarGradient, getInitials } from '../utils/avatar';
 import { ActivityDetails } from './ActivityDetails';
 import { CategoryIcon } from './CategoryIcon';
 
@@ -7,31 +8,6 @@ interface ParticipantCardProps {
   participant: ParticipantViewModel;
   isExpanded: boolean;
   onToggle: (id: string) => void;
-}
-
-const avatarPairs = [
-  ['#20a7df', '#8bd5f5'],
-  ['#2448bf', '#79b8ff'],
-  ['#0f766e', '#6ee7d8'],
-  ['#8f5cf6', '#cbb8ff'],
-  ['#1d4ed8', '#93c5fd'],
-  ['#ca8a04', '#fde68a'],
-];
-
-function getInitials(name: string) {
-  return name
-    .split(' ')
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase();
-}
-
-function getAvatarGradient(seed: string) {
-  const index =
-    seed.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0) % avatarPairs.length;
-  const [start, end] = avatarPairs[index];
-  return `linear-gradient(135deg, ${start}, ${end})`;
 }
 
 const allCategories: Category[] = ['education', 'publicSpeaking', 'universityPartnership'];
