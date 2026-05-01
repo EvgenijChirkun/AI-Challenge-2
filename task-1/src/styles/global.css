@@ -1,0 +1,36 @@
+:root {
+  --page-bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --accent-blue: #0ea5e9;
+  --accent-gold: #f2bd18;
+  --accent-silver: #d7e4f4;
+  --accent-bronze: #d9edf7;
+  --border: #e2e8f0;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --radius-card: 12px;
+  font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: var(--text-main);
+  background-color: var(--page-bg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}

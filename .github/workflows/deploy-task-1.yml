@@ -1,0 +1,69 @@
+name: Deploy Task 1 to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - task-1
+    paths:
+      - 'task-1/**'
+      - '.github/workflows/deploy-task-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: task-1/package-lock.json
+
+      - name: Install dependencies
+        working-directory: task-1
+        run: npm ci
+
+      - name: Build
+        working-directory: task-1
+        run: npm run build
+
+      - name: Prepare Pages artifact
+        run: |
+          mkdir -p pages/task-1
+          cp -r task-1/dist/* pages/task-1/
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: pages
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
