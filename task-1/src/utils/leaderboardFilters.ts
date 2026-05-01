@@ -18,13 +18,10 @@ export function getLeaderboardView(
         .filter((activity) => filters.category === 'all' || activity.category === filters.category)
         .sort((left, right) => right.date.localeCompare(left.date));
 
-      const categoryTotals = visibleActivities.reduce(
-        (totals, activity) => ({
-          ...totals,
-          [activity.category]: totals[activity.category] + activity.points,
-        }),
-        { ...emptyTotals },
-      );
+      const categoryTotals = visibleActivities.reduce((totals, activity) => {
+        totals[activity.category] += activity.points;
+        return totals;
+      }, { ...emptyTotals });
 
       const totalPoints = visibleActivities.reduce((sum, activity) => sum + activity.points, 0);
 
