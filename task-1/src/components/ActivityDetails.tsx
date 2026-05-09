@@ -5,10 +5,10 @@ interface ActivityDetailsProps {
   participant: ParticipantViewModel;
 }
 
-export const categoryLabels: Record<Category, string> = {
+const categoryLabels: Record<Category, string> = {
   education: 'Education',
   publicSpeaking: 'Public Speaking',
-  universityPartnership: 'University Partnership',
+  universityPartnership: 'Univ. Partnership',
 };
 
 export function ActivityDetails({ participant }: ActivityDetailsProps) {
