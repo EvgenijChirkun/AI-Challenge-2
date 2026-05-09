@@ -83,6 +83,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Gather — Free community events" },
+      { name: "description", content: "A platform for organizing and attending free community events, managing RSVPs, and checking attendees." },
+      { property: "og:description", content: "A platform for organizing and attending free community events, managing RSVPs, and checking attendees." },
+      { name: "twitter:description", content: "A platform for organizing and attending free community events, managing RSVPs, and checking attendees." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6486be51-9331-4b0a-b470-e3ebfada718f/id-preview-f0a1b9f9--b556c72f-d59c-4f7f-9828-3175f69fe5fe.lovable.app-1778348005130.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6486be51-9331-4b0a-b470-e3ebfada718f/id-preview-f0a1b9f9--b556c72f-d59c-4f7f-9828-3175f69fe5fe.lovable.app-1778348005130.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
