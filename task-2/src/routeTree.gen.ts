@@ -13,8 +13,8 @@ import { Route as TicketsRouteImport } from './routes/tickets'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as MyEventsRouteImport } from './routes/my-events'
 import { Route as ExploreRouteImport } from './routes/explore'
-import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as TicketsTicketCodeRouteImport } from './routes/tickets.$ticketCode'
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as HostRegisterRouteImport } from './routes/host.register'
@@ -46,14 +46,14 @@ const ExploreRoute = ExploreRouteImport.update({
   path: '/explore',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TicketsTicketCodeRoute = TicketsTicketCodeRouteImport.update({
@@ -82,9 +82,9 @@ const EventsSlugRoute = EventsSlugRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardReviewsRoute = DashboardReviewsRouteImport.update({
-  id: '/reviews',
-  path: '/reviews',
-  getParentRoute: () => DashboardRoute,
+  id: '/dashboard/reviews',
+  path: '/dashboard/reviews',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const HostsHostIdInvitesRoute = HostsHostIdInvitesRouteImport.update({
   id: '/hosts/$hostId/invites',
@@ -97,19 +97,18 @@ const EventsEventIdCheckInRoute = EventsEventIdCheckInRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardEventsNewRoute = DashboardEventsNewRouteImport.update({
-  id: '/events/new',
-  path: '/events/new',
-  getParentRoute: () => DashboardRoute,
+  id: '/dashboard/events/new',
+  path: '/dashboard/events/new',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardEventsEventIdRoute = DashboardEventsEventIdRouteImport.update({
-  id: '/events/$eventId',
-  path: '/events/$eventId',
-  getParentRoute: () => DashboardRoute,
+  id: '/dashboard/events/$eventId',
+  path: '/dashboard/events/$eventId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteWithChildren
   '/explore': typeof ExploreRoute
   '/my-events': typeof MyEventsRoute
   '/signin': typeof SigninRoute
@@ -120,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/host/register': typeof HostRegisterRoute
   '/invite/$token': typeof InviteTokenRoute
   '/tickets/$ticketCode': typeof TicketsTicketCodeRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/events/$eventId': typeof DashboardEventsEventIdRoute
   '/dashboard/events/new': typeof DashboardEventsNewRoute
   '/events/$eventId/check-in': typeof EventsEventIdCheckInRoute
@@ -127,7 +127,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteWithChildren
   '/explore': typeof ExploreRoute
   '/my-events': typeof MyEventsRoute
   '/signin': typeof SigninRoute
@@ -138,6 +137,7 @@ export interface FileRoutesByTo {
   '/host/register': typeof HostRegisterRoute
   '/invite/$token': typeof InviteTokenRoute
   '/tickets/$ticketCode': typeof TicketsTicketCodeRoute
+  '/dashboard': typeof DashboardIndexRoute
   '/dashboard/events/$eventId': typeof DashboardEventsEventIdRoute
   '/dashboard/events/new': typeof DashboardEventsNewRoute
   '/events/$eventId/check-in': typeof EventsEventIdCheckInRoute
@@ -146,7 +146,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteWithChildren
   '/explore': typeof ExploreRoute
   '/my-events': typeof MyEventsRoute
   '/signin': typeof SigninRoute
@@ -157,6 +156,7 @@ export interface FileRoutesById {
   '/host/register': typeof HostRegisterRoute
   '/invite/$token': typeof InviteTokenRoute
   '/tickets/$ticketCode': typeof TicketsTicketCodeRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/events/$eventId': typeof DashboardEventsEventIdRoute
   '/dashboard/events/new': typeof DashboardEventsNewRoute
   '/events/$eventId/check-in': typeof EventsEventIdCheckInRoute
@@ -166,7 +166,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/dashboard'
     | '/explore'
     | '/my-events'
     | '/signin'
@@ -177,6 +176,7 @@ export interface FileRouteTypes {
     | '/host/register'
     | '/invite/$token'
     | '/tickets/$ticketCode'
+    | '/dashboard/'
     | '/dashboard/events/$eventId'
     | '/dashboard/events/new'
     | '/events/$eventId/check-in'
@@ -184,7 +184,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/dashboard'
     | '/explore'
     | '/my-events'
     | '/signin'
@@ -195,6 +194,7 @@ export interface FileRouteTypes {
     | '/host/register'
     | '/invite/$token'
     | '/tickets/$ticketCode'
+    | '/dashboard'
     | '/dashboard/events/$eventId'
     | '/dashboard/events/new'
     | '/events/$eventId/check-in'
@@ -202,7 +202,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/dashboard'
     | '/explore'
     | '/my-events'
     | '/signin'
@@ -213,6 +212,7 @@ export interface FileRouteTypes {
     | '/host/register'
     | '/invite/$token'
     | '/tickets/$ticketCode'
+    | '/dashboard/'
     | '/dashboard/events/$eventId'
     | '/dashboard/events/new'
     | '/events/$eventId/check-in'
@@ -221,15 +221,18 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRouteWithChildren
   ExploreRoute: typeof ExploreRoute
   MyEventsRoute: typeof MyEventsRoute
   SigninRoute: typeof SigninRoute
   TicketsRoute: typeof TicketsRouteWithChildren
+  DashboardReviewsRoute: typeof DashboardReviewsRoute
   EventsSlugRoute: typeof EventsSlugRoute
   HostSlugRoute: typeof HostSlugRoute
   HostRegisterRoute: typeof HostRegisterRoute
   InviteTokenRoute: typeof InviteTokenRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardEventsEventIdRoute: typeof DashboardEventsEventIdRoute
+  DashboardEventsNewRoute: typeof DashboardEventsNewRoute
   EventsEventIdCheckInRoute: typeof EventsEventIdCheckInRoute
   HostsHostIdInvitesRoute: typeof HostsHostIdInvitesRoute
 }
@@ -264,18 +267,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tickets/$ticketCode': {
@@ -315,10 +318,10 @@ declare module '@tanstack/react-router' {
     }
     '/dashboard/reviews': {
       id: '/dashboard/reviews'
-      path: '/reviews'
+      path: '/dashboard/reviews'
       fullPath: '/dashboard/reviews'
       preLoaderRoute: typeof DashboardReviewsRouteImport
-      parentRoute: typeof DashboardRoute
+      parentRoute: typeof rootRouteImport
     }
     '/hosts/$hostId/invites': {
       id: '/hosts/$hostId/invites'
@@ -336,36 +339,20 @@ declare module '@tanstack/react-router' {
     }
     '/dashboard/events/new': {
       id: '/dashboard/events/new'
-      path: '/events/new'
+      path: '/dashboard/events/new'
       fullPath: '/dashboard/events/new'
       preLoaderRoute: typeof DashboardEventsNewRouteImport
-      parentRoute: typeof DashboardRoute
+      parentRoute: typeof rootRouteImport
     }
     '/dashboard/events/$eventId': {
       id: '/dashboard/events/$eventId'
-      path: '/events/$eventId'
+      path: '/dashboard/events/$eventId'
       fullPath: '/dashboard/events/$eventId'
       preLoaderRoute: typeof DashboardEventsEventIdRouteImport
-      parentRoute: typeof DashboardRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface DashboardRouteChildren {
-  DashboardReviewsRoute: typeof DashboardReviewsRoute
-  DashboardEventsEventIdRoute: typeof DashboardEventsEventIdRoute
-  DashboardEventsNewRoute: typeof DashboardEventsNewRoute
-}
-
-const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardReviewsRoute: DashboardReviewsRoute,
-  DashboardEventsEventIdRoute: DashboardEventsEventIdRoute,
-  DashboardEventsNewRoute: DashboardEventsNewRoute,
-}
-
-const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
-  DashboardRouteChildren,
-)
 
 interface TicketsRouteChildren {
   TicketsTicketCodeRoute: typeof TicketsTicketCodeRoute
@@ -380,15 +367,18 @@ const TicketsRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRouteWithChildren,
   ExploreRoute: ExploreRoute,
   MyEventsRoute: MyEventsRoute,
   SigninRoute: SigninRoute,
   TicketsRoute: TicketsRouteWithChildren,
+  DashboardReviewsRoute: DashboardReviewsRoute,
   EventsSlugRoute: EventsSlugRoute,
   HostSlugRoute: HostSlugRoute,
   HostRegisterRoute: HostRegisterRoute,
   InviteTokenRoute: InviteTokenRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+  DashboardEventsEventIdRoute: DashboardEventsEventIdRoute,
+  DashboardEventsNewRoute: DashboardEventsNewRoute,
   EventsEventIdCheckInRoute: EventsEventIdCheckInRoute,
   HostsHostIdInvitesRoute: HostsHostIdInvitesRoute,
 }
