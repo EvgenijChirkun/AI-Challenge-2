@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   Sparkles,
@@ -52,6 +52,7 @@ function buildNav({
 export function Header() {
   const { user, email, isHost, isChecker, memberships, signOut } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
   const signedIn = !!user;
@@ -62,6 +63,9 @@ export function Header() {
   });
 
   const roleLabel = isHost ? "Host" : isChecker ? "Checker" : "Attendee";
+  const goToNewEvent = () => {
+    void navigate({ to: "/dashboard/events/new" });
+  };
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur">
@@ -76,6 +80,22 @@ export function Header() {
         <nav className="hidden items-center gap-1 md:flex">
           {items.map((item) => {
             const active = pathname === item.to || pathname.startsWith(item.to + "/");
+            if (item.to === "/dashboard/events/new") {
+              return (
+                <button
+                  key={item.to}
+                  type="button"
+                  onClick={goToNewEvent}
+                  className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                    active
+                      ? "bg-secondary text-secondary-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              );
+            }
             return (
               <Link
                 key={item.to}
@@ -155,14 +175,28 @@ export function Header() {
         <div className="border-t border-border md:hidden">
           <nav className="container-page flex flex-col py-2">
             {items.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                onClick={() => setOpen(false)}
-                className="rounded-md px-3 py-2 text-sm font-medium text-foreground hover:bg-secondary"
-              >
-                {item.label}
-              </Link>
+              item.to === "/dashboard/events/new" ? (
+                <button
+                  key={item.to}
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    goToNewEvent();
+                  }}
+                  className="rounded-md px-3 py-2 text-left text-sm font-medium text-foreground hover:bg-secondary"
+                >
+                  {item.label}
+                </button>
+              ) : (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setOpen(false)}
+                  className="rounded-md px-3 py-2 text-sm font-medium text-foreground hover:bg-secondary"
+                >
+                  {item.label}
+                </Link>
+              )
             ))}
             {!signedIn && (
               <Link
