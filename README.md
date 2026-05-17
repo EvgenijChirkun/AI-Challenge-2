@@ -4,12 +4,12 @@ A public repository for AI Challenge submissions. Each task is isolated in its o
 
 ## Repository Structure
 
-| Folder    | Description                           |
-| --------- | ------------------------------------- |
-| `task-1/` | Static leaderboard replica            |
-| `task-2/` | Event hosting and attendance platform |
-| `task-3/` | Placeholder for future task           |
-| `task-4/` | Placeholder for future task           |
+| Folder    | Description                             |
+| --------- | --------------------------------------- |
+| `task-1/` | Static leaderboard replica              |
+| `task-2/` | Event hosting and attendance platform   |
+| `task-3/` | Telegram AI learning assistant with n8n |
+| `task-4/` | Placeholder for future task             |
 
 ## Task 1: Leaderboard Replica
 
@@ -46,15 +46,43 @@ Implemented capabilities include:
 - CSV export for RSVP and attendance data
 - Post-event feedback, gallery approval, reports, and review queue
 
+## Task 3: Telegram AI Learning Assistant
+
+An n8n workflow that implements a Telegram-based AI learning assistant.
+
+Core flow:
+
+**Learn from URL → Save material → Generate quiz → Answer questions → Score**
+
+- Source: `task-3/`
+- Usage guide: `task-3/README.md`
+- Report: `task-3/report.md`
+- Workflow export: `task-3/workflow.json`
+
+Implemented capabilities include:
+
+- Telegram bot commands: `/start`, `/learn <url>`, and `/quiz`
+- URL fetching and content extraction
+- Teacher AI role for summarizing learning materials
+- Persistent storage of saved materials in n8n Data Tables
+- Dynamic material selection from all saved topics
+- Examiner AI role for generating five multiple-choice quiz questions
+- One-question-at-a-time Telegram quiz flow
+- Inline answer buttons with callback handling
+- Quiz sessions with persisted progress, answers, and score
+- Final score and per-question feedback after quiz completion
+
 ## Responsible AI / Data Safety
 
 - Task 1 uses synthetic mock data only.
 - No real corporate or personal data is included.
 - Task 2 demo accounts and seeded data are for challenge review only.
-- `.env` files and service role secrets should not be committed.
+- Task 3 stores only Telegram user IDs and user-submitted learning URLs/content needed for the bot workflow.
+- `.env` files, API keys, Telegram bot tokens, OpenAI keys, Supabase service role secrets, and other credentials should not be committed.
 
 ## Development Notes
 
 - Each task is isolated in its own folder.
 - See each task folder for task-specific setup, usage, implementation details, and artifacts.
 - Task 2 was built with Lovable and Supabase, then copied into `task-2` for repository submission.
+- Task 3 was built in n8n Cloud and exported as `task-3/workflow.json`.
