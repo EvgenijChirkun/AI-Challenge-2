@@ -1,55 +1,66 @@
-# Task 3 — [Title]
+# Task 3 — Telegram AI Learning Assistant
 
-## Task Description
+## Overview
 
-> _Describe the task objective here._
+This project implements a Telegram-based AI learning assistant using n8n.
 
-## Requirements
+The bot helps users save learning materials from URLs, summarize them with AI, generate quizzes, and track quiz results.
 
-> _List any challenge-specific requirements or constraints._
+## Bot commands
 
-## Chosen Tech Stack
+- `/start` — shows usage instructions
+- `/learn <url>` — saves and summarizes a learning material
+- `/quiz` — shows saved materials and starts a quiz
 
-> _e.g., Python 3.11, PyTorch, scikit-learn, FastAPI, etc._
+## Features
 
-## Architecture / Approach
+- Telegram bot integration
+- URL content fetching and extraction
+- AI Teacher role for summarization
+- AI Examiner role for quiz generation
+- Dynamic saved-material selection via Telegram inline buttons
+- Five-question multiple-choice quiz flow
+- Answer validation
+- Per-question feedback
+- Final score calculation
+- Persistent storage using n8n Data Tables
 
-> _Describe the high-level approach, model architecture, or algorithm used._
+## How to test
 
-## How to Run Locally
+1. Open the Telegram bot:
 
-```bash
-# Example — replace with actual instructions
-cd task-3/
-# Install dependencies
-# pip install -r requirements.txt
-# Run the solution
-# python src/main.py
-```
+   `https://t.me/ai_learning_challenge_bot`
 
-## Input / Output
+2. Send:
 
-- **Input:** _Describe input format, files, or data sources._
-- **Output:** _Describe expected output, file format, or predictions._
+   `/start`
 
-## Files and Folders
+3. Add a material:
 
-| Path              | Description                              |
-|-------------------|------------------------------------------|
-| `src/`            | Source code                              |
-| `data/`           | Datasets or data references              |
-| `docs/`           | Task-specific notes and documentation    |
-| `artifacts/`      | Outputs, model files, reports            |
-| `deployment/`     | Deployment configs, scripts, or links    |
+   `/learn https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview`
 
-## Deployment / Demo Link
+4. Start a quiz:
 
-> _Add a link to a live demo, hosted API, or deployment if applicable._
+   `/quiz`
 
-## Submission Notes
+5. Select a saved material.
 
-> _Any additional notes for reviewers or evaluators._
+6. Answer all five questions.
 
-## Results
+7. The bot returns a final score and per-question feedback.
 
-> _Document final results, metrics, or scores here._
+## n8n workflow
+
+The exported workflow is included in:
+
+`workflow.json`
+
+## Data tables used
+
+- `learning_materials`
+- `quizzes`
+- `quiz_sessions`
+
+## Notes
+
+The workflow was built using a free n8n Cloud trial and n8n AI nodes. No external paid subscriptions are required beyond the n8n trial environment.
