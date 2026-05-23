@@ -239,6 +239,12 @@ function sortQueuedFlights(flights: Flight[]): Flight[] {
   });
 }
 
+function sortTimelineByStart(timeline: ScheduledSlot[]): ScheduledSlot[] {
+  return [...timeline].sort((a, b) => {
+    return toDate(a.start).getTime() - toDate(b.start).getTime();
+  });
+}
+
 function markUnscheduled(flight: Flight, reason: string): void {
   flight.status = 'unscheduled';
   flight.unscheduledReason = reason;
@@ -313,7 +319,7 @@ export function generateSchedule(): ScheduleResult {
   return {
     scheduled: airportState.flights.filter((flight) => flight.status === 'scheduled'),
     unscheduled: airportState.flights.filter((flight) => flight.status === 'unscheduled'),
-    timeline: airportState.timeline,
+    timeline: sortTimelineByStart(airportState.timeline),
     generatedAt: new Date().toISOString(),
   };
 }

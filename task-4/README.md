@@ -89,7 +89,7 @@ Example local MCP client configuration using the compiled server:
   "mcpServers": {
     "air-traffic-control-scheduler": {
       "command": "node",
-      "args": ["C:/Projects/AI-Challenge-2/task-4/dist/index.js"]
+      "args": ["./task-4/dist/index.js"]
     }
   }
 }
@@ -102,13 +102,13 @@ Example development configuration using `tsx`:
   "mcpServers": {
     "air-traffic-control-scheduler": {
       "command": "npx",
-      "args": ["tsx", "C:/Projects/AI-Challenge-2/task-4/src/index.ts"]
+      "args": ["tsx", "./task-4/src/index.ts"]
     }
   }
 }
 ```
 
-Adjust the path for your local repository location.
+The examples assume the MCP client is launched from the repository root. If your client uses another working directory, replace the relative path with the appropriate absolute path.
 
 ## Environment variables
 
