@@ -4,12 +4,12 @@ A public repository for AI Challenge submissions. Each task is isolated in its o
 
 ## Repository Structure
 
-| Folder    | Description                             |
-| --------- | --------------------------------------- |
-| `task-1/` | Static leaderboard replica              |
-| `task-2/` | Event hosting and attendance platform   |
-| `task-3/` | Telegram AI learning assistant with n8n |
-| `task-4/` | Placeholder for future task             |
+| Folder    | Description                               |
+| --------- | ----------------------------------------- |
+| `task-1/` | Static leaderboard replica                |
+| `task-2/` | Event hosting and attendance platform     |
+| `task-3/` | Telegram AI learning assistant with n8n   |
+| `task-4/` | Air Traffic Control MCP scheduling server |
 
 ## Task 1: Leaderboard Replica
 
@@ -72,12 +72,41 @@ Implemented capabilities include:
 - Quiz sessions with persisted progress, answers, and score
 - Final score and per-question feedback after quiz completion
 
+## Task 4: Air Traffic Control MCP Scheduling Server
+
+A TypeScript MCP server for AI-ready air traffic control scheduling.
+
+Core flow:
+
+**Submit flights → Generate schedule → Inspect airport state → Analyze bottlenecks**
+
+- Source: `task-4/`
+- Usage guide: `task-4/README.md`
+- Report: `task-4/report.md`
+
+Implemented capabilities include:
+
+- MCP server over stdio
+- `submit_flight` tool
+- `generate_schedule` tool
+- `get_airport_status` tool
+- `cancel_flight` tool
+- `analyze_bottleneck` tool
+- `airport://queue` resource
+- `airport://runways` resource
+- `airport://timeline` resource
+- Deterministic runway/gate scheduling
+- Dependency handling
+- Gate and runway capacity checks
+- Bottleneck analysis
+
 ## Responsible AI / Data Safety
 
 - Task 1 uses synthetic mock data only.
 - No real corporate or personal data is included.
 - Task 2 demo accounts and seeded data are for challenge review only.
 - Task 3 stores only Telegram user IDs and user-submitted learning URLs/content needed for the bot workflow.
+- Task 4 uses synthetic in-memory airport data only and is not intended for real aviation or safety-critical use.
 - `.env` files, API keys, Telegram bot tokens, OpenAI keys, Supabase service role secrets, and other credentials should not be committed.
 
 ## Development Notes
