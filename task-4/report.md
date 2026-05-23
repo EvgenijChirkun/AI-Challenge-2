@@ -124,3 +124,17 @@ The final implementation satisfies the main requirements for an MCP-based Air Tr
 - deterministic scheduling algorithm implemented
 - bottleneck analysis included
 - TypeScript project builds successfully
+
+Manual testing was also performed with MCP Inspector.
+
+Verified:
+
+- `get_airport_status` returns the initial airport state.
+- `submit_flight` accepts valid flight requests.
+- empty `dependencyFlightIds` values are normalized correctly.
+- `generate_schedule` creates runway/gate timeline slots.
+- flight dependencies are respected: `FL-1003` was scheduled after `FL-1001` plus the dependency buffer.
+- `airport://timeline` returns generated schedule data.
+- `analyze_bottleneck` returns runway utilization, gate demand, and recommendations.
+- `cancel_flight` changes flight status to `cancelled`.
+- `airport://timeline` excludes cancelled flights after cancellation.
