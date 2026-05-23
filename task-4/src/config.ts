@@ -94,8 +94,10 @@ function buildRunwayId(index: number): string {
 }
 
 function buildGateId(index: number): string {
-  const terminal = index < 2 ? 'A' : 'B';
-  return `${terminal}${(index % 2) + 1}`;
+  const terminalCode = String.fromCharCode(65 + Math.floor(index / 10));
+  const position = (index % 10) + 1;
+
+  return `${terminalCode}${position}`;
 }
 
 export const AIRPORT_CODE = process.env.AIRPORT_CODE?.trim() || 'AIC';
