@@ -44,6 +44,7 @@ export function getTimelineResource() {
     .map((flight) => {
       const slot: ScheduledSlot = {
         flightId: flight.flightId,
+        type: flight.type,
         runwayId: flight.assignedRunwayId!,
         start: flight.scheduledStart!,
         end: flight.scheduledEnd!,

@@ -4,6 +4,7 @@ import type {
   BottleneckAnalysis,
   Flight,
   FlightPriority,
+  FlightType,
   Gate,
   Runway,
   ScheduleResult,
@@ -48,16 +49,20 @@ function minutesBetween(start: string, end: string): number {
   return Math.round((toDate(end).getTime() - toDate(start).getTime()) / 60_000);
 }
 
-function getRunwayBufferMinutes(runway: Runway, flight: Flight): number {
-  if (flight.type === 'arrival') {
+function getRunwayBufferMinutes(
+  runway: Runway,
+  candidateType: FlightType,
+  existingType: FlightType,
+): number {
+  if (candidateType !== existingType) {
+    return runway.separationBuffers.mixedMinutes;
+  }
+
+  if (candidateType === 'arrival') {
     return runway.separationBuffers.arrivalMinutes;
   }
 
-  if (flight.type === 'departure') {
-    return runway.separationBuffers.departureMinutes;
-  }
-
-  return runway.separationBuffers.mixedMinutes;
+  return runway.separationBuffers.departureMinutes;
 }
 
 function overlapsWithBuffer(
@@ -144,9 +149,9 @@ function getDependencyStatus(flight: Flight): DependencyStatus {
 function isRunwayAvailable(runway: Runway, flight: Flight, start: Date, end: Date): boolean {
   const runwaySlots = airportState.timeline.filter((slot) => slot.runwayId === runway.id);
 
-  const bufferMinutes = getRunwayBufferMinutes(runway, flight);
-
   return runwaySlots.every((slot) => {
+    const bufferMinutes = getRunwayBufferMinutes(runway, flight.type, slot.type);
+
     return !overlapsWithBuffer(start, end, toDate(slot.start), toDate(slot.end), bufferMinutes);
   });
 }
@@ -210,6 +215,7 @@ function findFeasibleSlot(flight: Flight, latestDependencyEnd: Date | null): Sch
 
       return {
         flightId: flight.flightId,
+        type: flight.type,
         runwayId: runway.id,
         gateId: gate?.id,
         start: start.toISOString(),

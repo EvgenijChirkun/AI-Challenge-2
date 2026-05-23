@@ -50,6 +50,7 @@ export interface Flight extends FlightRequest {
 
 export interface ScheduledSlot {
   flightId: string;
+  type: FlightType;
   runwayId: string;
   gateId?: string;
   start: string;
