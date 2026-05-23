@@ -4,17 +4,25 @@ export type FlightStatus = 'queued' | 'scheduled' | 'cancelled' | 'unscheduled';
 
 export type RunwayCapability = 'arrival' | 'departure' | 'mixed';
 
+export interface RunwaySeparationBuffers {
+  arrivalMinutes: number;
+  departureMinutes: number;
+  mixedMinutes: number;
+}
+
 export interface Runway {
   id: string;
   name: string;
   capability: RunwayCapability;
-  wakeBufferMinutes: number;
+  lengthMeters: number;
+  separationBuffers: RunwaySeparationBuffers;
   isOpen: boolean;
 }
 
 export interface Gate {
   id: string;
   terminal: string;
+  turnaroundMinutes: number;
   isOpen: boolean;
 }
 
@@ -27,6 +35,7 @@ export interface FlightRequest {
   durationMinutes: number;
   requiresGate: boolean;
   dependencyFlightIds: string[];
+  minRunwayLengthMeters?: number;
 }
 
 export interface Flight extends FlightRequest {
@@ -63,6 +72,22 @@ export interface AirportStatus {
   scheduledFlights: Flight[];
   cancelledFlights: Flight[];
   unscheduledFlights: Flight[];
+  counts: {
+    queued: number;
+    scheduled: number;
+    cancelled: number;
+    unscheduled: number;
+    arrivals: number;
+    departures: number;
+  };
+  resourceUsage: {
+    runwayCount: number;
+    gateCount: number;
+    groundCrewCount: number;
+    usedRunways: number;
+    usedGates: number;
+    scheduleCompletionTime: string | null;
+  };
 }
 
 export interface BottleneckAnalysis {
@@ -79,6 +104,16 @@ export interface BottleneckAnalysis {
   gateDemand: {
     requiredGateFlights: number;
     openGates: number;
+  };
+  longestDependencyChain: {
+    totalElapsedMinutes: number;
+    flights: Array<{
+      flightId: string;
+      callsign: string;
+      type: FlightType;
+      scheduledStart: string;
+      scheduledEnd: string;
+    }>;
   };
   likelyBottlenecks: string[];
   recommendations: string[];

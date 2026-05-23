@@ -16,6 +16,20 @@ const PRIORITY_WEIGHT: Record<FlightPriority, number> = {
   low: 2,
 };
 
+type DependencyStatus =
+  | {
+      state: 'ready';
+      latestDependencyEnd: Date | null;
+    }
+  | {
+      state: 'waiting';
+      reason: string;
+    }
+  | {
+      state: 'blocked';
+      reason: string;
+    };
+
 function toDate(value: string): Date {
   const date = new Date(value);
 
@@ -28,6 +42,22 @@ function toDate(value: string): Date {
 
 function addMinutes(date: Date, minutes: number): Date {
   return new Date(date.getTime() + minutes * 60_000);
+}
+
+function minutesBetween(start: string, end: string): number {
+  return Math.round((toDate(end).getTime() - toDate(start).getTime()) / 60_000);
+}
+
+function getRunwayBufferMinutes(runway: Runway, flight: Flight): number {
+  if (flight.type === 'arrival') {
+    return runway.separationBuffers.arrivalMinutes;
+  }
+
+  if (flight.type === 'departure') {
+    return runway.separationBuffers.departureMinutes;
+  }
+
+  return runway.separationBuffers.mixedMinutes;
 }
 
 function overlapsWithBuffer(
@@ -44,17 +74,58 @@ function overlapsWithBuffer(
 }
 
 function runwaySupportsFlight(runway: Runway, flight: Flight): boolean {
-  return runway.capability === 'mixed' || runway.capability === flight.type;
+  const supportsOperation = runway.capability === 'mixed' || runway.capability === flight.type;
+
+  if (!supportsOperation) {
+    return false;
+  }
+
+  if (flight.minRunwayLengthMeters && runway.lengthMeters < flight.minRunwayLengthMeters) {
+    return false;
+  }
+
+  return true;
 }
 
-function getScheduledDependencyEnd(flight: Flight): Date | null {
+function getDependencyStatus(flight: Flight): DependencyStatus {
+  if (flight.dependencyFlightIds.length === 0) {
+    return {
+      state: 'ready',
+      latestDependencyEnd: null,
+    };
+  }
+
   let latestDependencyEnd: Date | null = null;
 
   for (const dependencyFlightId of flight.dependencyFlightIds) {
     const dependency = airportState.flights.find((item) => item.flightId === dependencyFlightId);
 
-    if (!dependency || dependency.status !== 'scheduled' || !dependency.scheduledEnd) {
-      return null;
+    if (!dependency) {
+      return {
+        state: 'blocked',
+        reason: `Dependency flight ${dependencyFlightId} was not found`,
+      };
+    }
+
+    if (dependency.status === 'cancelled') {
+      return {
+        state: 'blocked',
+        reason: `Dependency flight ${dependencyFlightId} was cancelled`,
+      };
+    }
+
+    if (dependency.status === 'unscheduled') {
+      return {
+        state: 'blocked',
+        reason: `Dependency flight ${dependencyFlightId} could not be scheduled`,
+      };
+    }
+
+    if (dependency.status !== 'scheduled' || !dependency.scheduledEnd) {
+      return {
+        state: 'waiting',
+        reason: `Dependency flight ${dependencyFlightId} is not scheduled yet`,
+      };
     }
 
     const dependencyEnd = toDate(dependency.scheduledEnd);
@@ -64,20 +135,19 @@ function getScheduledDependencyEnd(flight: Flight): Date | null {
     }
   }
 
-  return latestDependencyEnd;
+  return {
+    state: 'ready',
+    latestDependencyEnd,
+  };
 }
 
-function isRunwayAvailable(runway: Runway, start: Date, end: Date): boolean {
+function isRunwayAvailable(runway: Runway, flight: Flight, start: Date, end: Date): boolean {
   const runwaySlots = airportState.timeline.filter((slot) => slot.runwayId === runway.id);
 
+  const bufferMinutes = getRunwayBufferMinutes(runway, flight);
+
   return runwaySlots.every((slot) => {
-    return !overlapsWithBuffer(
-      start,
-      end,
-      toDate(slot.start),
-      toDate(slot.end),
-      runway.wakeBufferMinutes,
-    );
+    return !overlapsWithBuffer(start, end, toDate(slot.start), toDate(slot.end), bufferMinutes);
   });
 }
 
@@ -90,24 +160,25 @@ function findAvailableGate(start: Date, end: Date): Gate | undefined {
     const gateSlots = airportState.timeline.filter((slot) => slot.gateId === gate.id);
 
     return gateSlots.every((slot) => {
-      return !overlapsWithBuffer(start, end, toDate(slot.start), toDate(slot.end), 0);
+      return !overlapsWithBuffer(
+        start,
+        end,
+        toDate(slot.start),
+        toDate(slot.end),
+        gate.turnaroundMinutes,
+      );
     });
   });
 }
 
-function findFeasibleSlot(flight: Flight): ScheduledSlot | null {
+function findFeasibleSlot(flight: Flight, latestDependencyEnd: Date | null): ScheduledSlot | null {
   const requestedStart = toDate(flight.requestedTime);
-  const dependencyEnd = getScheduledDependencyEnd(flight);
 
-  if (flight.dependencyFlightIds.length > 0 && !dependencyEnd) {
-    return null;
-  }
-
-  const earliestStart = dependencyEnd
+  const earliestStart = latestDependencyEnd
     ? new Date(
         Math.max(
           requestedStart.getTime(),
-          addMinutes(dependencyEnd, DEFAULT_DEPENDENCY_BUFFER_MINUTES).getTime(),
+          addMinutes(latestDependencyEnd, DEFAULT_DEPENDENCY_BUFFER_MINUTES).getTime(),
         ),
       )
     : requestedStart;
@@ -118,12 +189,16 @@ function findFeasibleSlot(flight: Flight): ScheduledSlot | null {
     const start = cursor;
     const end = addMinutes(start, flight.durationMinutes);
 
+    if (end > horizonEnd) {
+      continue;
+    }
+
     for (const runway of airportState.runways) {
       if (!runway.isOpen || !runwaySupportsFlight(runway, flight)) {
         continue;
       }
 
-      if (!isRunwayAvailable(runway, start, end)) {
+      if (!isRunwayAvailable(runway, flight, start, end)) {
         continue;
       }
 
@@ -164,32 +239,75 @@ function sortQueuedFlights(flights: Flight[]): Flight[] {
   });
 }
 
+function markUnscheduled(flight: Flight, reason: string): void {
+  flight.status = 'unscheduled';
+  flight.unscheduledReason = reason;
+  delete flight.scheduledStart;
+  delete flight.scheduledEnd;
+  delete flight.assignedRunwayId;
+  delete flight.assignedGateId;
+}
+
+function scheduleFlight(flight: Flight, slot: ScheduledSlot): void {
+  flight.status = 'scheduled';
+  flight.scheduledStart = slot.start;
+  flight.scheduledEnd = slot.end;
+  flight.assignedRunwayId = slot.runwayId;
+  flight.assignedGateId = slot.gateId;
+
+  airportState.timeline.push(slot);
+}
+
 export function generateSchedule(): ScheduleResult {
   resetScheduleState();
 
-  const queuedFlights = sortQueuedFlights(
+  let pendingFlights = sortQueuedFlights(
     airportState.flights.filter((flight) => flight.status === 'queued'),
   );
 
-  for (const flight of queuedFlights) {
-    const slot = findFeasibleSlot(flight);
+  while (pendingFlights.length > 0) {
+    const deferredFlights: Flight[] = [];
+    let madeProgress = false;
 
-    if (!slot) {
-      flight.status = 'unscheduled';
-      flight.unscheduledReason =
-        flight.dependencyFlightIds.length > 0
-          ? 'No feasible slot found or dependency is not scheduled'
+    for (const flight of pendingFlights) {
+      const dependencyStatus = getDependencyStatus(flight);
+
+      if (dependencyStatus.state === 'waiting') {
+        deferredFlights.push(flight);
+        continue;
+      }
+
+      if (dependencyStatus.state === 'blocked') {
+        markUnscheduled(flight, dependencyStatus.reason);
+        madeProgress = true;
+        continue;
+      }
+
+      const slot = findFeasibleSlot(flight, dependencyStatus.latestDependencyEnd);
+
+      if (!slot) {
+        const reason = flight.minRunwayLengthMeters
+          ? `No suitable runway available for minimum length ${flight.minRunwayLengthMeters} meters`
           : 'No runway/gate slot available within scheduling horizon';
-      continue;
+
+        markUnscheduled(flight, reason);
+        madeProgress = true;
+        continue;
+      }
+
+      scheduleFlight(flight, slot);
+      madeProgress = true;
     }
 
-    flight.status = 'scheduled';
-    flight.scheduledStart = slot.start;
-    flight.scheduledEnd = slot.end;
-    flight.assignedRunwayId = slot.runwayId;
-    flight.assignedGateId = slot.gateId;
+    if (!madeProgress) {
+      for (const flight of deferredFlights) {
+        markUnscheduled(flight, 'Dependency cycle or unresolved dependency prevented scheduling');
+      }
 
-    airportState.timeline.push(slot);
+      break;
+    }
+
+    pendingFlights = sortQueuedFlights(deferredFlights);
   }
 
   return {
@@ -198,6 +316,70 @@ export function generateSchedule(): ScheduleResult {
     timeline: airportState.timeline,
     generatedAt: new Date().toISOString(),
   };
+}
+
+function findLongestDependencyChain(): BottleneckAnalysis['longestDependencyChain'] {
+  const scheduledFlights = airportState.flights.filter(
+    (flight) => flight.status === 'scheduled' && flight.scheduledStart && flight.scheduledEnd,
+  );
+
+  const scheduledById = new Map(scheduledFlights.map((flight) => [flight.flightId, flight]));
+
+  const memo = new Map<string, Flight[]>();
+
+  function buildChain(flight: Flight): Flight[] {
+    const cached = memo.get(flight.flightId);
+
+    if (cached) {
+      return cached;
+    }
+
+    const dependencyChains = flight.dependencyFlightIds
+      .map((dependencyFlightId) => scheduledById.get(dependencyFlightId))
+      .filter((dependency): dependency is Flight => Boolean(dependency))
+      .map((dependency) => buildChain(dependency));
+
+    const longestDependencyChain = dependencyChains.sort((a, b) => b.length - a.length)[0];
+
+    const chain = longestDependencyChain ? [...longestDependencyChain, flight] : [flight];
+
+    memo.set(flight.flightId, chain);
+    return chain;
+  }
+
+  const chains = scheduledFlights.map((flight) => buildChain(flight));
+  const longestChain =
+    chains.sort((a, b) => {
+      const aElapsed = getChainElapsedMinutes(a);
+      const bElapsed = getChainElapsedMinutes(b);
+      return bElapsed - aElapsed;
+    })[0] ?? [];
+
+  return {
+    totalElapsedMinutes: getChainElapsedMinutes(longestChain),
+    flights: longestChain.map((flight) => ({
+      flightId: flight.flightId,
+      callsign: flight.callsign,
+      type: flight.type,
+      scheduledStart: flight.scheduledStart!,
+      scheduledEnd: flight.scheduledEnd!,
+    })),
+  };
+}
+
+function getChainElapsedMinutes(chain: Flight[]): number {
+  if (chain.length === 0) {
+    return 0;
+  }
+
+  const first = chain[0];
+  const last = chain.at(-1);
+
+  if (!first?.scheduledStart || !last?.scheduledEnd) {
+    return 0;
+  }
+
+  return minutesBetween(first.scheduledStart, last.scheduledEnd);
 }
 
 export function analyzeBottlenecks(): BottleneckAnalysis {
@@ -211,9 +393,7 @@ export function analyzeBottlenecks(): BottleneckAnalysis {
     const runwaySlots = airportState.timeline.filter((slot) => slot.runwayId === runway.id);
 
     const occupiedMinutes = runwaySlots.reduce((total, slot) => {
-      return (
-        total + Math.round((toDate(slot.end).getTime() - toDate(slot.start).getTime()) / 60_000)
-      );
+      return total + minutesBetween(slot.start, slot.end);
     }, 0);
 
     return {
@@ -227,6 +407,8 @@ export function analyzeBottlenecks(): BottleneckAnalysis {
     (flight) => flight.requiresGate && flight.status !== 'cancelled',
   ).length;
   const openGates = airportState.gates.filter((gate) => gate.isOpen).length;
+
+  const longestDependencyChain = findLongestDependencyChain();
 
   const likelyBottlenecks: string[] = [];
   const recommendations: string[] = [];
@@ -242,6 +424,13 @@ export function analyzeBottlenecks(): BottleneckAnalysis {
     likelyBottlenecks.push('Gate demand is high relative to available open gates.');
     recommendations.push(
       'Prioritize gate turnover or allocate remote stands for short-duration flights.',
+    );
+  }
+
+  if (longestDependencyChain.flights.length > 1) {
+    likelyBottlenecks.push('A scheduled dependency chain drives part of the timeline.');
+    recommendations.push(
+      'Review dependent flight turnaround assumptions and dependency buffer settings.',
     );
   }
 
@@ -269,6 +458,7 @@ export function analyzeBottlenecks(): BottleneckAnalysis {
       requiredGateFlights,
       openGates,
     },
+    longestDependencyChain,
     likelyBottlenecks,
     recommendations,
   };

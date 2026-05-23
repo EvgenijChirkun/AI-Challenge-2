@@ -1,4 +1,5 @@
 import { airportState } from './state.js';
+import type { ScheduledSlot } from './types.js';
 
 function toJsonText(data: unknown): string {
   return JSON.stringify(data, null, 2);
@@ -31,18 +32,39 @@ export function getRunwaysResource() {
 }
 
 export function getTimelineResource() {
-  const activeTimeline = airportState.timeline.filter((slot) => {
-    const flight = airportState.flights.find((item) => item.flightId === slot.flightId);
+  const timeline: ScheduledSlot[] = airportState.flights
+    .filter((flight) => {
+      return (
+        flight.status === 'scheduled' &&
+        Boolean(flight.scheduledStart) &&
+        Boolean(flight.scheduledEnd) &&
+        Boolean(flight.assignedRunwayId)
+      );
+    })
+    .map((flight) => {
+      const slot: ScheduledSlot = {
+        flightId: flight.flightId,
+        runwayId: flight.assignedRunwayId!,
+        start: flight.scheduledStart!,
+        end: flight.scheduledEnd!,
+      };
 
-    return flight?.status === 'scheduled';
-  });
+      if (flight.assignedGateId) {
+        slot.gateId = flight.assignedGateId;
+      }
+
+      return slot;
+    })
+    .sort((a, b) => {
+      return new Date(a.start).getTime() - new Date(b.start).getTime();
+    });
 
   return {
     contents: [
       {
         uri: 'airport://timeline',
         mimeType: 'application/json',
-        text: toJsonText(activeTimeline),
+        text: toJsonText(timeline),
       },
     ],
   };

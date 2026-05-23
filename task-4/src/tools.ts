@@ -13,8 +13,6 @@ const dependencyFlightIdsSchema = z
       return [];
     }
 
-    // MCP Inspector can send an empty array-like UI field as an object.
-    // Only accept numeric-keyed array-like objects, otherwise treat it as empty.
     if (typeof value === 'object') {
       const entries = Object.entries(value as Record<string, unknown>);
       const numericEntries = entries.filter(([key]) => /^\d+$/.test(key));
@@ -48,6 +46,12 @@ export const submitFlightSchema = {
     .describe('Expected runway slot duration in minutes'),
   requiresGate: z.boolean().describe('Whether the flight needs a gate assignment'),
   dependencyFlightIds: dependencyFlightIdsSchema,
+  minRunwayLengthMeters: z
+    .number()
+    .int()
+    .positive()
+    .optional()
+    .describe('Optional minimum runway length required by the flight'),
 };
 
 export const cancelFlightSchema = {
@@ -78,6 +82,7 @@ export function handleSubmitFlight(input: SubmitFlightInput) {
     durationMinutes: input.durationMinutes,
     requiresGate: input.requiresGate,
     dependencyFlightIds: input.dependencyFlightIds ?? [],
+    minRunwayLengthMeters: input.minRunwayLengthMeters,
   };
 
   const flight = submitFlight(request);
