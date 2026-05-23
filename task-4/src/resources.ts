@@ -5,12 +5,14 @@ function toJsonText(data: unknown): string {
 }
 
 export function getQueueResource() {
+  const queuedFlights = airportState.flights.filter((flight) => flight.status === 'queued');
+
   return {
     contents: [
       {
         uri: 'airport://queue',
         mimeType: 'application/json',
-        text: toJsonText(airportState.flights.filter((flight) => flight.status === 'queued')),
+        text: toJsonText(queuedFlights),
       },
     ],
   };
@@ -29,12 +31,18 @@ export function getRunwaysResource() {
 }
 
 export function getTimelineResource() {
+  const activeTimeline = airportState.timeline.filter((slot) => {
+    const flight = airportState.flights.find((item) => item.flightId === slot.flightId);
+
+    return flight?.status === 'scheduled';
+  });
+
   return {
     contents: [
       {
         uri: 'airport://timeline',
         mimeType: 'application/json',
-        text: toJsonText(airportState.timeline),
+        text: toJsonText(activeTimeline),
       },
     ],
   };
